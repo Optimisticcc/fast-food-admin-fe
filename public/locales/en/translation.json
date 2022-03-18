@@ -30,6 +30,11 @@
         "cancel": "Cancel"
     },
     "product": {
+        "status": "Status",
+        "Pleaseselectaproductstatus": "Please select product status",
+        "Selectaproductstatus": "select product status",
+        "active": "Active",
+        "inactive": "Inactive",
         "add": "Add product",
         "name": "Name product",
         "images": "Images",

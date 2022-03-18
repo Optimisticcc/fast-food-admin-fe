@@ -13,6 +13,7 @@ import {
   Row,
   Col,
   message,
+  Tag,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -181,12 +182,25 @@ function ListProduct(props) {
       render: (record) => <span>{record?.name}</span>,
     },
     {
+      title: t && t("product.status"),
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (record) => (
+        <>
+          {record == 0 && (
+            <Tag color="orange">{t && t("product.inactive")}</Tag>
+          )}
+          {record == 1 && <Tag color="cyan">{t && t("product.active")}</Tag>}
+        </>
+      ),
+    },
+    {
       title: t && t("button.action"),
       dataIndex: "",
       key: "x",
       render: (record) => (
         <div>
-          <Popconfirm
+          {/* <Popconfirm
             title="Are you sure？"
             onConfirm={() => handleConfirmDelete(record.id)}
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
@@ -194,7 +208,7 @@ function ListProduct(props) {
             <Button type="link" danger>
               {t("button.delete")}
             </Button>
-          </Popconfirm>
+          </Popconfirm> */}
           <Button type="link" onClick={() => handleOpen(record)}>
             {t("button.edit")}
           </Button>
@@ -209,16 +223,6 @@ function ListProduct(props) {
       formValue
     );
     if (formValue.code) {
-      // form.current?.setFieldsValue({
-      //   id: formValue.id,
-      //   TenSanPham: formValue.TenSanPham,
-      //   DonGia: formValue.DonGia,
-      //   MoTa: formValue.MoTa,
-      //   SoLuong: formValue.SoLuong,
-      //   SoLuongDaBan: formValue.SoLuongDaBan,
-      //   category: formValue.category.id,
-      //   AnhMoTa: formValue.AnhMoTa,
-      // });
       setAdd(false);
       setValueForm({
         id: formValue.id,
@@ -229,6 +233,7 @@ function ListProduct(props) {
         quantitySold: formValue.quantitySold,
         productCategoryId: formValue.productCategoryId,
         images: formValue.images,
+        isActive: formValue.isActive ? 1 : 0,
       });
     } else {
       setAdd(true);
@@ -241,6 +246,7 @@ function ListProduct(props) {
         quantitySold: null,
         productCategoryId: null,
         images: [],
+        isActive: 1,
       });
       setValueForm({
         id: null,
@@ -251,6 +257,7 @@ function ListProduct(props) {
         quantitySold: null,
         productCategoryId: null,
         images: [],
+        isActive: 1,
       });
     }
 
@@ -280,6 +287,7 @@ function ListProduct(props) {
       quantitySold: null,
       productCategoryId: null,
       images: [],
+      isActive: 1,
     });
   };
 
@@ -302,14 +310,15 @@ function ListProduct(props) {
       source: "",
     });
   };
-  const handleConfirmDelete = async (id) => {
-    const action = await removeProduct(id)
-      .then((res) => message.success("Delete product success", 0.4))
-      .catch((err) => {
-        message.error(err.response.data.message, 1);
-      });
-    handleReloadData();
-  };
+  // const handleConfirmDelete = async (id) => {
+  //   console.log("🚀 ~ file: index.jsx ~ line 317 ~ handleConfirmDelete ~ valueForm.isActive", valueForm.isActive)
+  //   const action = await removeProduct(id)
+  //     .then((res) => message.success("Delete product success", 0.4))
+  //     .catch((err) => {
+  //       message.error(err.response.data.message, 1);
+  //     });
+  //   handleReloadData();
+  // };
 
   const handleDeleteImage = (id) => {
     let listAnh = valueForm.images;
@@ -427,12 +436,14 @@ function ListProduct(props) {
         quantitySold: valueForm.quantitySold,
         productCategoryId: valueForm.productCategoryId,
         images: valueForm.images,
+        isActive: valueForm.isActive,
       });
     } else {
       form.current?.setFieldsValue({
         id: valueForm.id,
         description: valueForm.description,
         images: valueForm.images,
+        isActive: valueForm.isActive,
       });
     }
   }, [valueForm]);
@@ -521,20 +532,6 @@ function ListProduct(props) {
               >
                 <InputNumber />
               </Form.Item>
-              {/* <Form.Item
-                label={t && t("product.quantitySold")}
-                name="quantitySold"
-                rules={[
-                  {
-                    required: true,
-                    message: t("product.Pleaseenteryourquantitysoldofproduct"),
-                    type: "number",
-                    min: 0,
-                  },
-                ]}
-              >
-                <InputNumber />
-              </Form.Item> */}
               <Form.Item
                 name="productCategoryId"
                 label={t && t("product.category")}
@@ -557,6 +554,24 @@ function ListProduct(props) {
                       {category.name}
                     </Option>
                   ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="isActive"
+                label={t && t("product.status")}
+                rules={[
+                  {
+                    required: true,
+                    message: t("product.Pleaseselectaproductstatus"),
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  placeholder={t && t("product.Selectaproductstatus")}
+                >
+                  <Option value={0}>{t && t("product.inactive")}</Option>
+                  <Option value={1}>{t && t("product.active")}</Option>
                 </Select>
               </Form.Item>
             </Col>
